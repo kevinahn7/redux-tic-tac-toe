@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './../styles/Game.css';
 import Board from './Board';
+import { connect } from 'react-redux';
 
 class Game extends Component {
   constructor(props) {
@@ -12,26 +13,32 @@ class Game extends Component {
         }
       ],
       stepNumber: 0,
-      xIsNext: true
     };
   }
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
-    const squares = current.squares.slice();
-    if (this.calculateWinner(squares) || squares[i]) {
+    const currentSquares = current.squares.slice();
+    if (this.calculateWinner(currentSquares) || currentSquares[i]) {
       return;
     }
-    squares[i] = this.state.xIsNext ? "X" : "O";
+    currentSquares[i] = this.props.xIsNext ? "X" : "O";
+    console.log("history length" + history.length);
+    const { dispatch } = this.props;
+    const xIsNextAction = {
+      type: "NEXT_TURN",
+      stepNumber: history.length
+    }
+    dispatch(xIsNextAction);
+
     this.setState({
       history: history.concat([
         {
-          squares: squares
+          squares: currentSquares
         }
       ]),
-      stepNumber: history.length,
-      xIsNext: !this.state.xIsNext
+      stepNumber: history.length
     });
   }
 
@@ -42,7 +49,7 @@ class Game extends Component {
     });
   }
 
-  calculateWinner(squares) {
+  calculateWinner(currentSquares) {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -55,8 +62,8 @@ class Game extends Component {
     ];
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+      if (currentSquares[a] && currentSquares[a] === currentSquares[b] && currentSquares[a] === currentSquares[c]) {
+        return currentSquares[a];
       }
     }
     return null;
@@ -82,7 +89,7 @@ class Game extends Component {
     if (winner) {
       status = "Winner: " + winner;
     } else {
-      status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+      status = "Next player: " + (this.props.xIsNext ? "X" : "O");
     }
 
     return (
@@ -102,4 +109,10 @@ class Game extends Component {
   }
 }
 
-export default Game;
+const mapStateToProps = state => {
+  return {
+    xIsNext: state.xIsNext
+  }
+}
+
+export default connect(mapStateToProps)(Game);
