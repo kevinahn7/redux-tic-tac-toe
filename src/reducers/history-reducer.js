@@ -1,8 +1,8 @@
 export default (state = [{squares: Array(9).fill(null)}], action) => {
-  // let newSate;
-  // switch(action.type){
-  //   case 'CLICK_SQUARE':
-  //   newState =
-  // }
-  return state;
+  switch (action.type) {
+    case 'UPDATE_HISTORY':
+      return action.newHistory;
+    default:
+      return state;
+  }
 }
