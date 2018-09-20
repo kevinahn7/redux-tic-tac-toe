@@ -1,9 +1,7 @@
-export default (state = {}, action) => {
-  let newState;
+export default (state = 0, action) => {
   switch (action.type) {
     case 'UPDATE_STEP_NUMBER':
-      
-      return newSate;
+      return action.stepNumber;
     default:
       return state;
   }

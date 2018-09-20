@@ -6,4 +6,7 @@ describe("stepNumberReducer", () => {
     expect(stepNumberReducer({}, { type: null })).toEqual({});
   });
 
+  test("Should update state number", () => {
+    expect(stepNumberReducer({}, { type: 'UPDATE_STEP_NUMBER', stepNumber: 2})).toEqual(2);
+  })
 })

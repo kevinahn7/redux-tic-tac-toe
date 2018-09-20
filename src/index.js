@@ -4,13 +4,13 @@ import './index.css';
 import Game from './components/Game';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import xIsNextReducer from './reducers/x-is-next-reducer';
+import rootReducer from './reducers/index'
 
-const store = createStore(xIsNextReducer)
+const store = createStore(rootReducer)
 
-let unsubscribe = store.subscribe(() =>
-  console.log(store.getState())
-);
+// let unsubscribe = store.subscribe(() =>
+//   // console.log(store.getState())
+// );
 
 ReactDOM.render(
   <Provider store={store}>

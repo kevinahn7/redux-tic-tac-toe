@@ -12,12 +12,13 @@ class Game extends Component {
           squares: Array(9).fill(null)
         }
       ],
-      stepNumber: 0,
     };
   }
 
   handleClick(i) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    console.log(this.props);
+    const { dispatch } = this.props;
+    const history = this.state.history.slice(0, this.props.stepNumber + 1);
     const current = history[history.length - 1];
     const currentSquares = current.squares.slice();
     if (this.calculateWinner(currentSquares) || currentSquares[i]) {
@@ -25,13 +26,16 @@ class Game extends Component {
     }
     currentSquares[i] = this.props.xIsNext ? "X" : "O";
     console.log("history length" + history.length);
-    const { dispatch } = this.props;
     const xIsNextAction = {
       type: "NEXT_TURN",
       stepNumber: history.length
     }
+    const stepNumberAction = {
+      type: "UPDATE_STEP_NUMBER",
+      stepNumber: history.length
+    }
     dispatch(xIsNextAction);
-
+    dispatch(stepNumberAction);
     this.setState({
       history: history.concat([
         {
@@ -71,7 +75,7 @@ class Game extends Component {
 
   render() {
     const history = this.state.history;
-    const current = history[this.state.stepNumber];
+    const current = history[this.props.stepNumber];
     const winner = this.calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
@@ -111,7 +115,8 @@ class Game extends Component {
 
 const mapStateToProps = state => {
   return {
-    xIsNext: state.xIsNext
+    xIsNext: state.xIsNext,
+    stepNumber: state.stepNumber
   }
 }
 
