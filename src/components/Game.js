@@ -4,53 +4,66 @@ import Board from './Board';
 import { connect } from 'react-redux';
 
 class Game extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      history: [
-        {
-          squares: Array(9).fill(null)
-        }
-      ],
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     history: [
+  //       {
+  //         squares: Array(9).fill(null)
+  //       }
+  //     ],
+  //   };
+  // }
 
   handleClick(i) {
-    console.log(this.props);
     const { dispatch } = this.props;
-    const history = this.state.history.slice(0, this.props.stepNumber + 1);
+    const history = this.props.history.slice(0, this.props.stepNumber + 1);
     const current = history[history.length - 1];
     const currentSquares = current.squares.slice();
     if (this.calculateWinner(currentSquares) || currentSquares[i]) {
       return;
     }
     currentSquares[i] = this.props.xIsNext ? "X" : "O";
-    console.log("history length" + history.length);
+    const newHistory = history.concat({squares: currentSquares});
     const xIsNextAction = {
       type: "NEXT_TURN",
       stepNumber: history.length
     }
+
     const stepNumberAction = {
       type: "UPDATE_STEP_NUMBER",
       stepNumber: history.length
     }
+
+    const historyAction = {
+      type: "UPDATE_HISTORY",
+      newHistory: newHistory
+    }
+
     dispatch(xIsNextAction);
     dispatch(stepNumberAction);
-    this.setState({
-      history: history.concat([
-        {
-          squares: currentSquares
-        }
-      ]),
-      stepNumber: history.length
-    });
+    dispatch(historyAction);
+    // this.setState({
+    //   history: history.concat([
+    //     {
+    //       squares: currentSquares
+    //     }
+    //   ]),
+    // });
   }
 
   jumpTo(step) {
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0
-    });
+    const { dispatch } = this.props;
+    const xIsNextAction = {
+      type: "NEXT_TURN",
+      stepNumber: step
+    }
+    const stepNumberAction = {
+      type: "UPDATE_STEP_NUMBER",
+      stepNumber: step
+    }
+    dispatch(xIsNextAction);
+    dispatch(stepNumberAction);
   }
 
   calculateWinner(currentSquares) {
@@ -74,8 +87,10 @@ class Game extends Component {
   }
 
   render() {
-    const history = this.state.history;
+    const history = this.props.history;
+    console.log(history);
     const current = history[this.props.stepNumber];
+    console.log(history[this.props.stepNumber]);
     const winner = this.calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
@@ -115,6 +130,7 @@ class Game extends Component {
 
 const mapStateToProps = state => {
   return {
+    history: state.history,
     xIsNext: state.xIsNext,
     stepNumber: state.stepNumber
   }
